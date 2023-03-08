@@ -55,7 +55,7 @@ internal enum class LicenseStatus(val httpCode: Int) {
     NOT_FOUND(404)
 }
 
-fun printRectangle(textList: List<String>) {
+internal fun printRectangle(textList: List<String>) {
     val maxLen = textList.maxOfOrNull { it.length }?.plus(7) ?: 0
     val rows = textList.size + 2 // Number of rows in the rectangle
 
@@ -84,11 +84,11 @@ fun printRectangle(textList: List<String>) {
     println("#".repeat(maxLen + 1))
 }
 
-fun String.toRedAndBold(): String {
+internal fun String.toRedAndBold(): String {
     return "\u001b[1;31m$this\u001b[0m"
 }
 
-fun String.toGreenAndBold(): String {
+internal fun String.toGreenAndBold(): String {
     return "\u001b[1;32m$this\u001b[0m"
 }
 

@@ -17,6 +17,8 @@ dependencies {
     // gson
     implementation("com.google.code.gson:gson:2.8.9")
     implementation("com.github.TheFruxz:Ascend:21.0.0")
+    // kotlinx.serialization
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
 }
 
 tasks.test {

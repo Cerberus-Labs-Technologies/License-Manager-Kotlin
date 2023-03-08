@@ -29,25 +29,16 @@ class LicenseManager(useConfig: Boolean = true, licenseKey: String = "", userId:
         else
             this.config = Config(licenseKey, userId, productId)
 
-        val textList = listOf(
-            "",
-            "LicenseManager v1.0.0",
-            "Made by Cerberus-Labs.tech",
-            "Authored by Kelvin Bill",
-            "License Key: ${config.licenseKey}",
-            "User ID: ${config.userId}",
-            "Product ID: ${config.productId}",
-            ""
-        )
-        printRectangle(textList)
     }
 
+    // TODO: change to actual license server
     private val licenseServerUrl = "https://backend.cerberus-labs.tech/api/v1/license/${config.licenseKey}"
     private val privateUrl = " http://127.0.0.1:25818/api/v1/license/${config.licenseKey}"
 
-    //TODO: add config handler
     private fun loadConfig(): Config {
-        this.config = Config("test", 1, 5)
+        val fileConfig = FileConfig("license")
+        fileConfig.createConfig()
+        this.config = fileConfig.toLicenseConfig()
         return this.config
     }
 
@@ -55,7 +46,6 @@ class LicenseManager(useConfig: Boolean = true, licenseKey: String = "", userId:
         val license = kotlin.runCatching {
             makeHttpGetRequest<License>(privateUrl)
         }.onFailure {
-            println("Error: " + it.message)
             println(it.stackTraceToString())
             return false
         }.getOrThrow()
@@ -71,12 +61,25 @@ class LicenseManager(useConfig: Boolean = true, licenseKey: String = "", userId:
     }
 
     fun validate(validCallback: () -> Unit, nonValidCallback: () -> Unit) {
-        if (isValid()) validCallback() else nonValidCallback()
+        val validity = isValid()
+        if (validity) validCallback() else nonValidCallback()
+        val textList = listOf(
+            "",
+            "LicenseManager v1.0.0",
+            "Made by Cerberus-Labs.tech",
+            "Authored by Kelvin Bill",
+            "License Key: ${config.licenseKey}",
+            "User ID: ${config.userId}",
+            "Product ID: ${config.productId}",
+            "Your IP Address: ${getCurrentIpAddress()}",
+            "License is: " + if (validity) "valid" else "invalid",
+            ""
+        )
+        printRectangle(textList)
     }
 
     private fun getCurrentIpAddress(): String {
         val address = InetAddress.getLocalHost()
-        println(address.hostAddress)
         return address.hostAddress
     }
 
