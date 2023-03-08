@@ -54,3 +54,44 @@ internal enum class LicenseStatus(val httpCode: Int) {
     EXPIRED(406),
     NOT_FOUND(404)
 }
+
+fun printRectangle(textList: List<String>) {
+    val maxLen = textList.maxOfOrNull { it.length }?.plus(7) ?: 0
+    val rows = textList.size + 2 // Number of rows in the rectangle
+
+    // Print the top border
+    println("#".repeat(maxLen + 1))
+
+    // Print the sides with text and horizontal border
+    for ((index, text) in textList.withIndex()) {
+        val paddingSize = maxLen - text.length - 2
+        val paddingStart = paddingSize / 2
+        val paddingEnd = paddingSize - paddingStart
+        when (index) {
+            0 -> {
+                println("# ${" ".repeat(paddingStart)}$text${" ".repeat(paddingEnd)}#")
+            }
+            textList.lastIndex -> {
+                println("#${" ".repeat(paddingStart)}$text${" ".repeat(paddingEnd)} #")
+            }
+            else -> {
+                println("# ${" ".repeat(paddingStart)}$text${" ".repeat(paddingEnd)}#")
+            }
+        }
+    }
+
+    // Print the bottom border
+    println("#".repeat(maxLen + 1))
+}
+
+fun String.toRedAndBold(): String {
+    return "\u001b[1;31m$this\u001b[0m"
+}
+
+fun String.toGreenAndBold(): String {
+    return "\u001b[1;32m$this\u001b[0m"
+}
+
+
+
+

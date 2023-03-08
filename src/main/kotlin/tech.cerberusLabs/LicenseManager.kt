@@ -1,9 +1,8 @@
 package tech.cerberusLabs
 
-import de.fruxz.ascend.tool.timing.calendar.Calendar
 import java.net.InetAddress
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
 
 /**
  * LicenseManager is a class that manages the license for a product.
@@ -29,6 +28,18 @@ class LicenseManager(useConfig: Boolean = true, licenseKey: String = "", userId:
             this.config = loadConfig()
         else
             this.config = Config(licenseKey, userId, productId)
+
+        val textList = listOf(
+            "",
+            "LicenseManager v1.0.0",
+            "Made by Cerberus-Labs.tech",
+            "Authored by Kelvin Bill",
+            "License Key: ${config.licenseKey}",
+            "User ID: ${config.userId}",
+            "Product ID: ${config.productId}",
+            ""
+        )
+        printRectangle(textList)
     }
 
     private val licenseServerUrl = "https://backend.cerberus-labs.tech/api/v1/license/${config.licenseKey}"
