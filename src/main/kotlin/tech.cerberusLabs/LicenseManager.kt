@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit
  * @since 1.0.0
  * @version 1.0.0
  */
-class LicenseManager(useConfig: Boolean = true, licenseKey: String = "", userId: Int = 0, productId: Int = 0) {
+class LicenseManager(private val productName: String, useConfig: Boolean = true, licenseKey: String = "", userId: Int = 0, productId: Int = 0) {
 
     private var config: Config
 
@@ -39,7 +39,7 @@ class LicenseManager(useConfig: Boolean = true, licenseKey: String = "", userId:
     private val privateUrl = " http://127.0.0.1:25818/api/v1/license/${config.licenseKey}"
 
     private fun loadConfig(): Config {
-        val fileConfig = FileConfig("license")
+        val fileConfig = FileConfig(this.productName)
         fileConfig.createConfig()
         this.config = fileConfig.toLicenseConfig()
         return this.config
