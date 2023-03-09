@@ -1,10 +1,10 @@
 package tech.cerberusLabs
 
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import java.io.File
-import kotlin.reflect.KClass
 
 class FileConfig(name: String) {
 
@@ -157,7 +157,7 @@ class FileConfig(name: String) {
         return jsonElement.jsonObject[key]?.jsonArray?.map { Json.decodeFromString(it.toString()) }
     }
 
-    fun set(key: String, value: Any) {
+    fun <T : Any> set(key: String, value: T) {
         // Read the JSON string from the file with the given configName
         val jsonString = file.readText()
 
@@ -167,18 +167,49 @@ class FileConfig(name: String) {
         // Create a new JSON object with the updated value
         val newConfig = jsonElement.jsonObject.toMutableMap()
         when (value) {
-            is String -> newConfig[key] = JsonPrimitive(value)
-            is Number -> newConfig[key] = JsonPrimitive(value)
-            is Boolean -> newConfig[key] = JsonPrimitive(value)
+            is String -> newConfig[key] = Json.encodeToJsonElement(value)
+            is Number -> newConfig[key] = Json.encodeToJsonElement(value)
+            is Boolean -> newConfig[key] = Json.encodeToJsonElement(value)
+            is List<*> -> {
+                when (val firstElement = value.firstOrNull()) {
+                    is String -> newConfig[key] = JsonArray(value.map { JsonPrimitive(it as String) })
+                    is Number -> newConfig[key] = JsonArray(value.map { JsonPrimitive(it as Number) })
+                    is Boolean -> newConfig[key] = JsonArray(value.map { JsonPrimitive(it as Boolean) })
+                    is Serializable -> newConfig[key] = JsonArray(value.map { Json.encodeToJsonElement(it) })
+                    else -> throw IllegalArgumentException("Invalid value type list: ${firstElement?.javaClass} its type is ${firstElement?.javaClass?.kotlin}")
+                }
+            }
+            is Serializable -> newConfig[key] = Json.encodeToJsonElement(value)
             else -> throw IllegalArgumentException("Invalid value type: ${value.javaClass}")
         }
-        val updatedJson = JsonObject(newConfig)
+
+        val updatedJson = Json.encodeToJsonElement(JsonObject(newConfig))
 
         // Serialize the updated JSON object to a string
         val updatedJsonString = Json.encodeToString(updatedJson)
         // Write the string back to the file
         file.writeText(updatedJsonString)
     }
+
+    fun delete(key: String) {
+        // Read the JSON string from the file with the given configName
+        val jsonString = file.readText()
+
+        // Parse the JSON string into a dynamic JsonElement
+        val jsonElement = Json.parseToJsonElement(jsonString)
+
+        // Create a new JSON object with the updated value
+        val newConfig = jsonElement.jsonObject.toMutableMap()
+        newConfig.remove(key)
+
+        val updatedJson = Json.encodeToJsonElement(JsonObject(newConfig))
+
+        // Serialize the updated JSON object to a string
+        val updatedJsonString = Json.encodeToString(updatedJson)
+        // Write the string back to the file
+        file.writeText(updatedJsonString)
+    }
+
 
     fun toLicenseConfig(): Config {
         return Config(

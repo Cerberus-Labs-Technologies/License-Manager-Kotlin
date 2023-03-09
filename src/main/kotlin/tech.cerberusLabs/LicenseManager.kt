@@ -1,8 +1,11 @@
 package tech.cerberusLabs
 
+import kotlinx.serialization.Serializable
 import java.net.InetAddress
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 /**
  * LicenseManager is a class that manages the license for a product.
@@ -76,6 +79,16 @@ class LicenseManager(useConfig: Boolean = true, licenseKey: String = "", userId:
             ""
         )
         printRectangle(textList)
+        startLicenseChecker(nonValidCallback)
+    }
+
+    private fun startLicenseChecker(nonValidCallback: () -> Unit) {
+        val executor = Executors.newScheduledThreadPool(1)
+        executor.scheduleAtFixedRate({
+            if (!isValid()) {
+                nonValidCallback()
+            }
+        }, 0, 1, TimeUnit.HOURS)
     }
 
     private fun getCurrentIpAddress(): String {
@@ -84,7 +97,6 @@ class LicenseManager(useConfig: Boolean = true, licenseKey: String = "", userId:
     }
 
 }
-data class Config(var licenseKey: String, var userId: Int, var productId: Int)
 internal data class License(
     val productId: Int,
     val userId: Int,

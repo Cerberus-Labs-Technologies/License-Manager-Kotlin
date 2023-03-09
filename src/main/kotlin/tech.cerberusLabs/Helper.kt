@@ -3,6 +3,7 @@ package tech.cerberusLabs
 import java.net.URL
 import java.net.HttpURLConnection
 import com.google.gson.Gson
+import kotlinx.serialization.Serializable
 
 internal inline fun <reified T> makeHttpGetRequest(url: String): T {
     val connection = URL(url).openConnection() as HttpURLConnection
@@ -54,6 +55,9 @@ internal enum class LicenseStatus(val httpCode: Int) {
     EXPIRED(406),
     NOT_FOUND(404)
 }
+
+@Serializable()
+data class Config(var licenseKey: String, var userId: Int, var productId: Int)
 
 internal fun printRectangle(textList: List<String>) {
     val maxLen = textList.maxOfOrNull { it.length }?.plus(7) ?: 0
