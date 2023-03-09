@@ -1,6 +1,5 @@
 package tech.cerberusLabs
 
-import kotlinx.serialization.Serializable
 import java.net.InetAddress
 import java.text.SimpleDateFormat
 import java.util.*
@@ -34,9 +33,7 @@ class LicenseManager(private val productName: String, useConfig: Boolean = true,
 
     }
 
-    // TODO: change to actual license server
     private val licenseServerUrl = "https://backend.cerberus-labs.tech/api/v1/license/${config.licenseKey}"
-    private val privateUrl = " http://127.0.0.1:25818/api/v1/license/${config.licenseKey}"
 
     private fun loadConfig(): Config {
         val fileConfig = FileConfig(this.productName)
@@ -47,7 +44,7 @@ class LicenseManager(private val productName: String, useConfig: Boolean = true,
 
     private fun isValid(): Boolean {
         val license = kotlin.runCatching {
-            makeHttpGetRequest<License>(privateUrl)
+            makeHttpGetRequest<License>(licenseServerUrl)
         }.onFailure {
             println(it.stackTraceToString())
             return false
