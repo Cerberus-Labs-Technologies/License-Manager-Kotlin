@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import java.net.HttpURLConnection
 import java.net.URL
 
-internal inline fun <reified T> makeHttpGetRequest(url: String): T {
+inline fun <reified T> makeHttpGetRequest(url: String): T {
     val connection = URL(url).openConnection() as HttpURLConnection
     connection.requestMethod = "GET"
     connection.connectTimeout = 5000
@@ -45,9 +45,9 @@ internal inline fun <reified T> makeHttpGetRequest(url: String): T {
     return gson.fromJson(data, T::class.java)
 }
 
-internal data class RestResult(val data: Any, val success: Boolean)
+data class RestResult(val data: Any, val success: Boolean)
 
-internal enum class LicenseStatus(val httpCode: Int) {
+enum class LicenseStatus(val httpCode: Int) {
     INACTIVE(403),
     BLOCKED(401),
     EXPIRED(406),
