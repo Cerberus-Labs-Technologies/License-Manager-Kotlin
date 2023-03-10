@@ -1,4 +1,4 @@
-package tech.cerberusLabs
+package tech.cerberusLabs.configs
 
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
