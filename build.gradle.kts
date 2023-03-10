@@ -2,11 +2,11 @@ plugins {
     kotlin("jvm") version "1.8.0"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.0"
-    id("maven-publish")
+    `maven-publish`
 }
 
 group = "tech.cerberusLabs"
-version = "1.0-SNAPSHOT"
+version = "1.0"
 
 repositories {
     mavenCentral()
@@ -21,7 +21,28 @@ dependencies {
     implementation("com.github.TheFruxz:Ascend:21.0.0")
     // kotlinx.serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
-    implementation("com.github.jitpack:gradle-simple:1.0")
+}
+
+val sourceJar by tasks.register<Jar>("sourceJar") {
+    archiveClassifier.set("sources")
+    from(sourceSets.main.get().allSource)
+}
+
+publishing {
+    repositories {
+        mavenLocal()
+    }
+
+    publications.create("CerberusLabsLicenseManager", MavenPublication::class) {
+        artifactId = "license-manager"
+        version = version
+
+        artifact(sourceJar) {
+            classifier = "sources"
+        }
+        from(components["kotlin"])
+    }
+
 }
 
 tasks.test {
