@@ -1,4 +1,4 @@
-package tech.cerberusLabs
+package tech.cerberusLabs.extensions
 
 fun List<String>.printRectangle() {
     val maxLen = this.maxOfOrNull { it.length }?.plus(7) ?: 0

@@ -2,6 +2,7 @@ package tech.cerberusLabs
 
 import tech.cerberusLabs.configs.Config
 import tech.cerberusLabs.configs.FileConfig
+import tech.cerberusLabs.extensions.printRectangle
 import tech.cerberusLabs.rest.makeHttpGetRequest
 import java.net.InetAddress
 import java.text.SimpleDateFormat
