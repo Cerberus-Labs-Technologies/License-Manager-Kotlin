@@ -28,7 +28,7 @@ class LicenseManager(private val productName: String, useConfig: Boolean = true,
 
     private var config: Config
 
-    private var license: License? = null
+    var license: License? = null
 
     init {
         if (useConfig)
