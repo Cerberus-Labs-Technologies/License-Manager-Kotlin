@@ -21,6 +21,7 @@ dependencies {
     implementation("com.github.TheFruxz:Ascend:21.0.0")
     // kotlinx.serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
+    implementation("com.github.jitpack:gradle-simple:1.0")
 }
 
 tasks.test {
