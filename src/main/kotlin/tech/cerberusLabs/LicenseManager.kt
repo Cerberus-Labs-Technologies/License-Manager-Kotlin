@@ -2,7 +2,6 @@ package tech.cerberusLabs
 
 import tech.cerberusLabs.configs.Config
 import tech.cerberusLabs.configs.FileConfig
-import tech.cerberusLabs.extensions.printRectangle
 import tech.cerberusLabs.rest.makeHttpGetRequest
 import java.net.InetAddress
 import java.text.SimpleDateFormat
@@ -101,6 +100,28 @@ class LicenseManager(private val productName: String, useConfig: Boolean = true,
     private fun getCurrentIpAddress(): String {
         val address = InetAddress.getLocalHost()
         return address.hostAddress
+    }
+
+    private fun List<String>.printRectangle() {
+        val maxLen = this.maxOfOrNull { it.length }?.plus(7) ?: 0
+        println("#".repeat(maxLen + 1))
+        for ((index, text) in this.withIndex()) {
+            val paddingSize = maxLen - text.length - 2
+            val paddingStart = paddingSize / 2
+            val paddingEnd = paddingSize - paddingStart
+            when (index) {
+                0 -> {
+                    println("# ${" ".repeat(paddingStart)}$text${" ".repeat(paddingEnd)}#")
+                }
+                this.lastIndex -> {
+                    println("#${" ".repeat(paddingStart)}$text${" ".repeat(paddingEnd)} #")
+                }
+                else -> {
+                    println("# ${" ".repeat(paddingStart)}$text${" ".repeat(paddingEnd)}#")
+                }
+            }
+        }
+        println("#".repeat(maxLen + 1))
     }
 
 }
