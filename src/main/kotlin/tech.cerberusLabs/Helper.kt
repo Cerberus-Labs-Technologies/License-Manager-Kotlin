@@ -1,9 +1,8 @@
 package tech.cerberusLabs
 
-import java.net.URL
-import java.net.HttpURLConnection
 import com.google.gson.Gson
-import kotlinx.serialization.Serializable
+import java.net.HttpURLConnection
+import java.net.URL
 
 internal inline fun <reified T> makeHttpGetRequest(url: String): T {
     val connection = URL(url).openConnection() as HttpURLConnection
@@ -49,25 +48,18 @@ internal inline fun <reified T> makeHttpGetRequest(url: String): T {
 internal data class RestResult(val data: Any, val success: Boolean)
 
 internal enum class LicenseStatus(val httpCode: Int) {
-    VALID(200),
     INACTIVE(403),
     BLOCKED(401),
     EXPIRED(406),
     NOT_FOUND(404)
 }
 
-@Serializable()
 data class Config(var licenseKey: String, var userId: Int, var productId: Int)
 
-internal fun printRectangle(textList: List<String>) {
-    val maxLen = textList.maxOfOrNull { it.length }?.plus(7) ?: 0
-    val rows = textList.size + 2 // Number of rows in the rectangle
-
-    // Print the top border
+internal fun List<String>.printRectangle() {
+    val maxLen = this.maxOfOrNull { it.length }?.plus(7) ?: 0
     println("#".repeat(maxLen + 1))
-
-    // Print the sides with text and horizontal border
-    for ((index, text) in textList.withIndex()) {
+    for ((index, text) in this.withIndex()) {
         val paddingSize = maxLen - text.length - 2
         val paddingStart = paddingSize / 2
         val paddingEnd = paddingSize - paddingStart
@@ -75,7 +67,7 @@ internal fun printRectangle(textList: List<String>) {
             0 -> {
                 println("# ${" ".repeat(paddingStart)}$text${" ".repeat(paddingEnd)}#")
             }
-            textList.lastIndex -> {
+            this.lastIndex -> {
                 println("#${" ".repeat(paddingStart)}$text${" ".repeat(paddingEnd)} #")
             }
             else -> {
@@ -83,19 +75,8 @@ internal fun printRectangle(textList: List<String>) {
             }
         }
     }
-
-    // Print the bottom border
     println("#".repeat(maxLen + 1))
 }
-
-internal fun String.toRedAndBold(): String {
-    return "\u001b[1;31m$this\u001b[0m"
-}
-
-internal fun String.toGreenAndBold(): String {
-    return "\u001b[1;32m$this\u001b[0m"
-}
-
 
 
 

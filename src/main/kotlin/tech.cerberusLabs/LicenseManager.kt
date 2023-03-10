@@ -25,6 +25,8 @@ class LicenseManager(private val productName: String, useConfig: Boolean = true,
 
     private var config: Config
 
+    private var license: License? = null
+
     init {
         if (useConfig)
             this.config = loadConfig()
@@ -46,7 +48,6 @@ class LicenseManager(private val productName: String, useConfig: Boolean = true,
         val license = kotlin.runCatching {
             makeHttpGetRequest<License>(licenseServerUrl)
         }.onFailure {
-            println(it.stackTraceToString())
             return false
         }.getOrThrow()
         val dateString = license.expires
@@ -57,26 +58,31 @@ class LicenseManager(private val productName: String, useConfig: Boolean = true,
         if (!license.isIpBound(getCurrentIpAddress())) return false
         if (!license.active) return false
         if (!license.permanent && license.expiresAt.before(Date())) return false
+        this.license = license
         return true
     }
 
     fun validate(validCallback: () -> Unit, nonValidCallback: () -> Unit) {
         val validity = isValid()
+
         if (validity) validCallback() else nonValidCallback()
-        val textList = listOf(
+        buildLogList(validity).printRectangle()
+        startLicenseChecker(nonValidCallback)
+    }
+
+    private fun buildLogList(validity: Boolean): List<String> {
+        return listOf(
             "",
             "LicenseManager v1.0.0",
             "Made by Cerberus-Labs.tech",
             "Authored by Kelvin Bill",
             "License Key: ${config.licenseKey}",
-            "User ID: ${config.userId}",
             "Product ID: ${config.productId}",
+            "Licensed to: " + if (license != null) license!!.username else config.userId,
             "Your IP Address: ${getCurrentIpAddress()}",
-            "License is: " + if (validity) "valid" else "invalid",
+            "License is: " + if (validity) "Valid" else "Invalid",
             ""
         )
-        printRectangle(textList)
-        startLicenseChecker(nonValidCallback)
     }
 
     private fun startLicenseChecker(nonValidCallback: () -> Unit) {
@@ -94,9 +100,10 @@ class LicenseManager(private val productName: String, useConfig: Boolean = true,
     }
 
 }
-internal data class License(
+data class License(
     val productId: Int,
     val userId: Int,
+    val username: String?,
     val license: String,
     val boundIPs: List<String>,
     val sponsored: Boolean,

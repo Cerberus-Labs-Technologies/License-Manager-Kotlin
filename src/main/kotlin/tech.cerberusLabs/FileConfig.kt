@@ -12,36 +12,26 @@ class FileConfig(name: String) {
     private val file = File("license/$name.json")
 
     fun createConfig() {
-        // Create the directory if it doesn't exist
         if (!file.parentFile.exists()) {
             file.parentFile.mkdirs()
-            // Create the file if it doesn't exist
-            if (!file.exists()) {
-                file.createNewFile()
-                val newConfig = JsonObject(emptyMap())
-                val emptyJson = Json.encodeToString(newConfig)
-
-                file.writeText(emptyJson)
-                set("licenseKey", "KEY HERE")
-                set("userId", 0)
-                set("productId", 1)
-            }
-
+            this.createFile()
         } else {
-            if (!file.exists()) {
-                file.createNewFile()
-                val newConfig = JsonObject(emptyMap())
-                val emptyJson = Json.encodeToString(newConfig)
-
-                file.writeText(emptyJson)
-
-                set("licenseKey", "KEY HERE")
-                set("userId", 0)
-                set("productId", 1)
-            }
+            this.createFile()
             val configs = listOf(Config("key", 1, 1), Config("key2", 2, 2))
             set("configs", configs)
             delete("configs")
+        }
+    }
+
+    private fun createFile() {
+        if (!file.exists()) {
+            file.createNewFile()
+            val newConfig = JsonObject(emptyMap())
+            val emptyJson = Json.encodeToString(newConfig)
+            file.writeText(emptyJson)
+            set("licenseKey", "KEY HERE")
+            set("userId", 0)
+            set("productId", 1)
         }
     }
 
