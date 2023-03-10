@@ -56,7 +56,7 @@ internal enum class LicenseStatus(val httpCode: Int) {
 
 data class Config(var licenseKey: String, var userId: Int, var productId: Int)
 
-internal fun List<String>.printRectangle() {
+fun List<String>.printRectangle() {
     val maxLen = this.maxOfOrNull { it.length }?.plus(7) ?: 0
     println("#".repeat(maxLen + 1))
     for ((index, text) in this.withIndex()) {
