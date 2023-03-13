@@ -3,11 +3,13 @@ package tech.cerberusLabs
 import tech.cerberusLabs.configs.Config
 import tech.cerberusLabs.configs.FileConfig
 import tech.cerberusLabs.rest.makeHttpGetRequest
-import java.net.InetAddress
+import java.net.InetSocketAddress
+import java.net.Socket
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+
 
 /**
  * LicenseManager is a class that manages the license for a product.
@@ -58,7 +60,6 @@ class LicenseManager(private val productName: String, useConfig: Boolean = true,
         license.expiresAt = dateFormat.parse(dateString)
         if (license.productId != config.productId) return false
         if (license.userId != config.userId) return false
-        if (!license.isIpBound(getCurrentIpAddress())) return false
         if (!license.active) return false
         if (!license.permanent && license.expiresAt.before(Date())) return false
         this.license = license
@@ -82,7 +83,6 @@ class LicenseManager(private val productName: String, useConfig: Boolean = true,
             "License Key: ${config.licenseKey}",
             "Product ID: ${config.productId}",
             "Licensed to: " + if (license != null) license!!.username else config.userId,
-            "Your IP Address: ${getCurrentIpAddress()}",
             "License is: " + if (validity) "Valid" else "Invalid",
             ""
         )
@@ -95,11 +95,6 @@ class LicenseManager(private val productName: String, useConfig: Boolean = true,
                 nonValidCallback()
             }
         }, 0, 1, TimeUnit.HOURS)
-    }
-
-    private fun getCurrentIpAddress(): String {
-        val address = InetAddress.getLocalHost()
-        return address.hostAddress
     }
 
     private fun List<String>.printRectangle() {
